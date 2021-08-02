@@ -2,12 +2,13 @@ package pl.akademiaqa.cucumber.steps.card;
 
 import io.cucumber.java8.En;
 import org.apache.http.HttpStatus;
-import org.assertj.core.api.Assertions;
 import pl.akademiaqa.api.trello.UpdateRequest;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.url.TrelloUrl;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class UpdateCardSteps implements En {
 
@@ -23,7 +24,7 @@ public class UpdateCardSteps implements En {
             requestHandler.addQueryParam("idList", listId);
 
             responseHandler.setResponse(updateRequest.update(requestHandler));
-            Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+            assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
         });
     }
 }

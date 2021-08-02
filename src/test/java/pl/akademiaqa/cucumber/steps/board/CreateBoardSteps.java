@@ -2,13 +2,14 @@ package pl.akademiaqa.cucumber.steps.board;
 
 import io.cucumber.java8.En;
 import org.apache.http.HttpStatus;
-import org.assertj.core.api.Assertions;
 import pl.akademiaqa.api.trello.CreateRequest;
 import pl.akademiaqa.commom.CommonValues;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.url.TrelloUrl;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class CreateBoardSteps implements En {
 
@@ -31,7 +32,6 @@ public class CreateBoardSteps implements En {
 
         Given("the board already exist", () -> {
             createNewBoard(CommonValues.BOARD_NAME);
-            ;
         });
 
         When("I create new board {string}", (String boardName) -> {
@@ -58,7 +58,7 @@ public class CreateBoardSteps implements En {
         requestHandler.addQueryParam("name", boardName);
 
         responseHandler.setResponse(createBoardRequest.create(requestHandler));
-        Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
 
         context.addBoard(boardName, responseHandler.getId());
     }

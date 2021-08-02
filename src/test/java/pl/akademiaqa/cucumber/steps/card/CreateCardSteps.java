@@ -1,16 +1,15 @@
 package pl.akademiaqa.cucumber.steps.card;
 
 import io.cucumber.java8.En;
-import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
-import org.assertj.core.api.Assertions;
 import pl.akademiaqa.api.trello.CreateRequest;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.url.TrelloUrl;
 
-@RequiredArgsConstructor
+import static org.assertj.core.api.Assertions.*;
+
 public class CreateCardSteps implements En {
 
     public CreateCardSteps(Context context, RequestHandler requestHandler,
@@ -24,7 +23,7 @@ public class CreateCardSteps implements En {
             requestHandler.addQueryParam("name", cardName);
 
             responseHandler.setResponse(createRequest.create(requestHandler));
-            Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+            assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
 
             context.addCard(cardName, responseHandler.getId());
         });

@@ -5,7 +5,7 @@ import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
-import pl.akademiaqa.api.trello.boards.CreateBoardRequest;
+import pl.akademiaqa.api.trello.CreateRequest;
 import pl.akademiaqa.commom.CommonValues;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.api.ResponseHandler;
@@ -15,7 +15,7 @@ import pl.akademiaqa.url.TrelloUrl;
 @RequiredArgsConstructor
 public class CreateBoardSteps {
 
-    private final CreateBoardRequest createBoardRequest;
+    private final CreateRequest createBoardRequest;
     private final RequestHandler requestHandler;
     private final ResponseHandler responseHandler;
     private final Context context;
@@ -40,7 +40,7 @@ public class CreateBoardSteps {
         requestHandler.setEndpoint(TrelloUrl.BOARDS);
         requestHandler.addQueryParam("name", "");
 
-        responseHandler.setResponse(createBoardRequest.createBoard(requestHandler));
+        responseHandler.setResponse(createBoardRequest.create(requestHandler));
     }
 
     @When("I try to create new board when not authenticated")
@@ -48,14 +48,14 @@ public class CreateBoardSteps {
         requestHandler.setEndpoint(TrelloUrl.BOARDS);
         requestHandler.addQueryParam("name", CommonValues.BOARD_NAME);
 
-        responseHandler.setResponse(createBoardRequest.createBoard(requestHandler));
+        responseHandler.setResponse(createBoardRequest.create(requestHandler));
     }
 
     private void createNewBoard(String boardName) {
         requestHandler.setEndpoint(TrelloUrl.BOARDS);
         requestHandler.addQueryParam("name", boardName);
 
-        responseHandler.setResponse(createBoardRequest.createBoard(requestHandler));
+        responseHandler.setResponse(createBoardRequest.create(requestHandler));
         Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
 
         context.addBoard(boardName, responseHandler.getId());

@@ -1,27 +1,23 @@
 package pl.akademiaqa.cucumber.steps.authentication;
 
-import io.cucumber.java.en.Given;
+import io.cucumber.java8.En;
 import lombok.RequiredArgsConstructor;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.trello.TrelloAuthentication;
 
 @RequiredArgsConstructor
-public class TrelloAuthenticationSteps {
+public class TrelloAuthenticationSteps implements En {
 
-    private final TrelloAuthentication trelloAuthentication;
-    private final RequestHandler requestHandler;
+    public TrelloAuthenticationSteps(TrelloAuthentication trelloAuthentication, RequestHandler requestHandler) {
 
-    @Given("I am authenticated to Trello")
-    public void i_am_authenticated_to_trello() {
+        Given("I am authenticated to Trello", () -> {
+            requestHandler.addQueryParam("key", trelloAuthentication.getKey());
+            requestHandler.addQueryParam("token", trelloAuthentication.getToken());
+        });
 
-        requestHandler.addQueryParam("key", trelloAuthentication.getKey());
-        requestHandler.addQueryParam("token", trelloAuthentication.getToken());
-    }
-
-    @Given("I am not authenticated to Trello")
-    public void i_am_not_authenticated_to_trello() {
-
-        requestHandler.addQueryParam("key", "");
-        requestHandler.addQueryParam("token", "");
+        Given("I am not authenticated to Trello", () -> {
+            requestHandler.addQueryParam("key", "");
+            requestHandler.addQueryParam("token", "");
+        });
     }
 }

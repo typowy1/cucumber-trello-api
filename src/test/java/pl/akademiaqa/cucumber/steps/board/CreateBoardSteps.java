@@ -1,8 +1,6 @@
 package pl.akademiaqa.cucumber.steps.board;
 
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
-import lombok.RequiredArgsConstructor;
+import io.cucumber.java8.En;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
 import pl.akademiaqa.api.trello.CreateRequest;
@@ -12,43 +10,47 @@ import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.url.TrelloUrl;
 
-@RequiredArgsConstructor
-public class CreateBoardSteps {
+public class CreateBoardSteps implements En {
 
     private final CreateRequest createBoardRequest;
     private final RequestHandler requestHandler;
     private final ResponseHandler responseHandler;
     private final Context context;
 
-    @When("I create new board")
-    public void i_create_new_board() {
-        createNewBoard(CommonValues.BOARD_NAME);
-    }
+    public CreateBoardSteps(CreateRequest createBoardRequest, RequestHandler requestHandler,
+                            ResponseHandler responseHandler, Context context) {
 
-    @Given("the board already exist")
-    public void the_board_already_exist() {
-        createNewBoard(CommonValues.BOARD_NAME);
-    }
+        this.createBoardRequest = createBoardRequest;
+        this.requestHandler = requestHandler;
+        this.responseHandler = responseHandler;
+        this.context = context;
 
-    @When("I create new board {string}")
-    public void i_create_new_board(String boardName) {
-        createNewBoard(boardName);
-    }
+        When("I create new board", () -> {
+            createNewBoard(CommonValues.BOARD_NAME);
+        });
 
-    @When("I try to create board with empty board name")
-    public void i_try_to_create_board_with_empty_board_name() {
-        requestHandler.setEndpoint(TrelloUrl.BOARDS);
-        requestHandler.addQueryParam("name", "");
+        Given("the board already exist", () -> {
+            createNewBoard(CommonValues.BOARD_NAME);
+            ;
+        });
 
-        responseHandler.setResponse(createBoardRequest.create(requestHandler));
-    }
+        When("I create new board {string}", (String boardName) -> {
+            createNewBoard(boardName);
+        });
 
-    @When("I try to create new board when not authenticated")
-    public void i_try_to_create_new_board_when_not_authenticated() {
-        requestHandler.setEndpoint(TrelloUrl.BOARDS);
-        requestHandler.addQueryParam("name", CommonValues.BOARD_NAME);
+        When("I try to create board with empty board name", () -> {
+            requestHandler.setEndpoint(TrelloUrl.BOARDS);
+            requestHandler.addQueryParam("name", "");
 
-        responseHandler.setResponse(createBoardRequest.create(requestHandler));
+            responseHandler.setResponse(createBoardRequest.create(requestHandler));
+        });
+
+        When("I try to create new board when not authenticated", () -> {
+            requestHandler.setEndpoint(TrelloUrl.BOARDS);
+            requestHandler.addQueryParam("name", CommonValues.BOARD_NAME);
+
+            responseHandler.setResponse(createBoardRequest.create(requestHandler));
+        });
     }
 
     private void createNewBoard(String boardName) {

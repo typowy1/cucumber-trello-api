@@ -1,7 +1,6 @@
 package pl.akademiaqa.cucumber.steps.board;
 
-import io.cucumber.java.en.When;
-import lombok.RequiredArgsConstructor;
+import io.cucumber.java8.En;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
 import pl.akademiaqa.api.trello.UpdateRequest;
@@ -11,21 +10,18 @@ import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.url.TrelloUrl;
 
-@RequiredArgsConstructor
-public class UpdateBoardSteps {
+public class UpdateBoardSteps implements En {
 
-    private final RequestHandler requestHandler;
-    private final ResponseHandler responseHandler;
-    private final UpdateRequest updateRequest;
-    private final Context context;
+    public UpdateBoardSteps(RequestHandler requestHandler, ResponseHandler responseHandler,
+                            UpdateRequest updateRequest, Context context) {
 
-    @When("I update board name {string}")
-    public void i_update_board_name(String newBoardName) {
-        requestHandler.setEndpoint(TrelloUrl.BOARDS);
-        requestHandler.addPathParam("id", context.getBoards().get(CommonValues.BOARD_NAME));
-        requestHandler.addQueryParam("name", newBoardName);
+        When("I update board name {string}", (String newBoardName) -> {
+            requestHandler.setEndpoint(TrelloUrl.BOARDS);
+            requestHandler.addPathParam("id", context.getBoards().get(CommonValues.BOARD_NAME));
+            requestHandler.addQueryParam("name", newBoardName);
 
-        responseHandler.setResponse(updateRequest.update(requestHandler));
-        Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+            responseHandler.setResponse(updateRequest.update(requestHandler));
+            Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+        });
     }
 }

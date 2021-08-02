@@ -1,35 +1,31 @@
 package pl.akademiaqa.cucumber.steps.card;
 
-import io.cucumber.java.en.Then;
-import io.restassured.response.Response;
-import lombok.RequiredArgsConstructor;
+import io.cucumber.java8.En;
 import org.apache.http.HttpStatus;
-import org.assertj.core.api.Assertions;
 import pl.akademiaqa.api.trello.ReadRequest;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.url.TrelloUrl;
 
-@RequiredArgsConstructor
-public class ReadCardSteps {
+import static org.assertj.core.api.Assertions.*;
 
-    private final Context context;
-    private final RequestHandler requestHandler;
-    private final ResponseHandler responseHandler;
-    private final ReadRequest readRequest;
+public class ReadCardSteps implements En {
 
-    @Then("I see {string} on {string} list")
-    public void i_see_on_list(String cardName, String listName) {
-        String listId = context.getLists().get(listName);
-        String cardId = context.getCards().get(cardName);
+    public ReadCardSteps(Context context, RequestHandler requestHandler,
+                         ResponseHandler responseHandler, ReadRequest readRequest) {
 
-        requestHandler.setEndpoint(TrelloUrl.CARDS);
-        requestHandler.addPathParam("id", cardId);
+        Then("I see {string} on {string} list", (String cardName, String listName) -> {
+            String listId = context.getLists().get(listName);
+            String cardId = context.getCards().get(cardName);
 
-        responseHandler.setResponse(readRequest.read(requestHandler));
+            requestHandler.setEndpoint(TrelloUrl.CARDS);
+            requestHandler.addPathParam("id", cardId);
 
-        Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-        Assertions.assertThat(responseHandler.getResponse().getBody().jsonPath().getString("idList")).isEqualTo(listId);
+            responseHandler.setResponse(readRequest.read(requestHandler));
+
+            assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
+            assertThat(responseHandler.getResponse().getBody().jsonPath().getString("idList")).isEqualTo(listId);
+        });
     }
 }

@@ -1,54 +1,44 @@
 package pl.akademiaqa.cucumber.hooks;
 
-import io.cucumber.java.After;
-import io.cucumber.java.BeforeStep;
-import io.restassured.response.Response;
-import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpStatus;
-import org.assertj.core.api.Assertions;
+import io.cucumber.java8.En;
 import pl.akademiaqa.api.trello.DeleteRequest;
 import pl.akademiaqa.handlers.api.RequestHandler;
+import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.handlers.trello.TrelloAuthentication;
 import pl.akademiaqa.url.TrelloUrl;
 
-@RequiredArgsConstructor
-public class Hooks {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private final Context context;
-    private final RequestHandler requestHandler;
-    private final DeleteRequest deleteRequest;
-    private final TrelloAuthentication trelloAuthentication;
+public class Hooks implements En {
 
-    @After(value = "@cleanup")
-    public void afterScenario() {
+    public Hooks(Context context, RequestHandler requestHandler, ResponseHandler responseHandler,
+                 DeleteRequest deleteRequest, TrelloAuthentication trelloAuthentication) {
 
-        context.getBoards().values()
-                .forEach(boardId -> {
-                    requestHandler.setEndpoint(TrelloUrl.BOARDS);
-                    requestHandler.addPathParam("id", boardId);
-                    Response response = deleteRequest.delete(requestHandler);
-                    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-                });
+        After("@cleanup", () -> {
+            context.getBoards().values().stream()
+                    .forEach(boardId -> {
+                        requestHandler.setEndpoint(TrelloUrl.BOARDS);
+                        requestHandler.getPathParams().put("id", boardId);
+                        responseHandler.setResponse(deleteRequest.delete(requestHandler));
+                        assertThat(responseHandler.getStatusCode()).isEqualTo(200);
+                    });
+        });
+
+        BeforeStep("@authenticated", () -> {
+            clearRequestData(requestHandler);
+            requestHandler.getQueryParams().put("key", trelloAuthentication.getKey());
+            requestHandler.getQueryParams().put("token", trelloAuthentication.getToken());
+        });
+
+        BeforeStep("@not_authenticated", () -> {
+            clearRequestData(requestHandler);
+        });
     }
 
-    @BeforeStep(value = "@authenticated")
-    public void clearRequest() {
+    private void clearRequestData(RequestHandler requestHandler) {
         requestHandler.getQueryParams().clear();
         requestHandler.getPathParams().clear();
         requestHandler.setEndpoint(null);
-        setAuthDetails();
-    }
-
-    @BeforeStep(value = "@not_authenticated")
-    public void clearAuth() {
-        requestHandler.getQueryParams().clear();
-        requestHandler.getPathParams().clear();
-        requestHandler.setEndpoint(null);
-    }
-
-    private void setAuthDetails() {
-        requestHandler.getQueryParams().put("key", trelloAuthentication.getKey());
-        requestHandler.getQueryParams().put("token", trelloAuthentication.getToken());
     }
 }

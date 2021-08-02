@@ -1,6 +1,6 @@
 package pl.akademiaqa.cucumber.steps.card;
 
-import io.cucumber.java.en.Given;
+import io.cucumber.java8.En;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
@@ -11,25 +11,22 @@ import pl.akademiaqa.handlers.shared.Context;
 import pl.akademiaqa.url.TrelloUrl;
 
 @RequiredArgsConstructor
-public class CreateCardSteps {
+public class CreateCardSteps implements En {
 
-    private final Context context;
-    private final RequestHandler requestHandler;
-    private final ResponseHandler responseHandler;
-    private final CreateRequest createRequest;
+    public CreateCardSteps(Context context, RequestHandler requestHandler,
+                           ResponseHandler responseHandler, CreateRequest createRequest) {
 
-    @Given("I create card {string} on {string}")
-    public void i_create_card_on(String cardName, String listName) {
+        Given("I create card {string} on {string}", (String cardName, String listName) -> {
+            String listId = context.getLists().get(listName);
 
-        String listId = context.getLists().get(listName);
+            requestHandler.setEndpoint(TrelloUrl.CARDS);
+            requestHandler.addQueryParam("idList", listId);
+            requestHandler.addQueryParam("name", cardName);
 
-        requestHandler.setEndpoint(TrelloUrl.CARDS);
-        requestHandler.addQueryParam("idList", listId);
-        requestHandler.addQueryParam("name", cardName);
+            responseHandler.setResponse(createRequest.create(requestHandler));
+            Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
 
-        responseHandler.setResponse(createRequest.create(requestHandler));
-        Assertions.assertThat(responseHandler.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
-
-        context.addCard(cardName, responseHandler.getId());
+            context.addCard(cardName, responseHandler.getId());
+        });
     }
 }

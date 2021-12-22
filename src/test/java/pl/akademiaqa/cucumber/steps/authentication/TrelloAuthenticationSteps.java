@@ -16,4 +16,10 @@ public class TrelloAuthenticationSteps {
         requestHandler.addQueryParams("key", trelloAutentication.getKey());
         requestHandler.addQueryParams("token", trelloAutentication.getToken());
     }
+
+    @Given("I am not authenticated to Trello")
+    public void iAmNotAuthenticatedToTrello() {
+        requestHandler.addQueryParams("key", "");
+        requestHandler.addQueryParams("token", "");
+    }
 }

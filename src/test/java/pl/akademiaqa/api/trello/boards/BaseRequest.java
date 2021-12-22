@@ -1,4 +1,4 @@
-package pl.akademiaqa.cucumber.steps.api.trello.boards;
+package pl.akademiaqa.api.trello.boards;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;

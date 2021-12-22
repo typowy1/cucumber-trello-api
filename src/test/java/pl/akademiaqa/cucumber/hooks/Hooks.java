@@ -5,7 +5,7 @@ import io.restassured.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
-import pl.akademiaqa.cucumber.steps.api.trello.boards.DeleteBoardRequest;
+import pl.akademiaqa.api.trello.boards.DeleteBoardRequest;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.sherd.Context;
 import pl.akademiaqa.url.TrelloUrl;
@@ -24,6 +24,7 @@ public class Hooks {
                 .forEach(boardId -> {
                     requestHandler.setEndpoint(TrelloUrl.BOARDS);
                     requestHandler.addPathParams("id", boardId);
+                    System.out.println("id: " + boardId);
                     Response response = deleteBoardRequest.deleteBoardRequest(requestHandler);
                     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
                 });

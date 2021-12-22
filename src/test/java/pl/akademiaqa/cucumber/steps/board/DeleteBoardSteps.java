@@ -3,7 +3,7 @@ package pl.akademiaqa.cucumber.steps.board;
 import io.cucumber.java.en.When;
 import lombok.RequiredArgsConstructor;
 import pl.akademiaqa.common.CommonValues;
-import pl.akademiaqa.cucumber.steps.api.trello.boards.DeleteBoardRequest;
+import pl.akademiaqa.api.trello.boards.DeleteBoardRequest;
 import pl.akademiaqa.handlers.api.RequestHandler;
 import pl.akademiaqa.handlers.api.ResponseHandler;
 import pl.akademiaqa.handlers.sherd.Context;
